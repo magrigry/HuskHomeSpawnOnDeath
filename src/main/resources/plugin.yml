@@ -1,0 +1,6 @@
+name: HuskHomeSpawnOnDeath
+version: ${project.version}
+main: fr.historya.huskhomespawnondeath.HuskHomeSpawnOnDeath
+api-version: 1.17
+depend:
+  - HuskHomes
