@@ -1,6 +1,6 @@
 # HuskHome-SpawnOnDeath
 
-This plugin is a simple addon for [HuskHome](https://github.com/WiIIiam278/HuskHomes2) that allow to teleport player to spawn when they die.  
+This plugin is a simple addon for [HuskHomes](https://github.com/WiIIiam278/HuskHomes2) that allow to teleport player to spawn when they die.  
 
 When `spawn_command.enabled` is set to `true` 
 and `spawn_command.bungee_network_spawn.enabled` is set to `true`
