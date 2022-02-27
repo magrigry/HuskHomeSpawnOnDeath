@@ -10,8 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,34 +26,38 @@ public class HandleDeathRespawn implements Listener {
     @EventHandler
     public void onDeath(PlayerRespawnEvent event) {
 
-        if (! HuskHomes.getSettings().doCrossServerSpawn()) {
-            return;
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(HuskHomeSpawnOnDeath.plugin, () -> {
 
-        String spawnWarpName = HuskHomes.getSettings().getSpawnWarpName();
-
-        try (Connection connection = HuskHomes.getConnection()) {
-            if (! DataManager.warpExists(spawnWarpName, connection)) {
+            if (! HuskHomes.getSettings().doCrossServerSpawn()) {
                 return;
             }
-        } catch (SQLException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "An SQL exception occurred teleporting a player.", e);
-        }
 
-        Warp warp = this.huskHomesAPI.getWarp(spawnWarpName);
+            String spawnWarpName = HuskHomes.getSettings().getSpawnWarpName();
 
-        if (warp == null) {
-            return;
-        }
+            try (Connection connection = HuskHomes.getConnection()) {
 
-        TeleportationPoint teleportationPoint = new TeleportationPoint(warp.getLocation(), warp.getServer());
+                if (! DataManager.warpExists(spawnWarpName, connection)) {
+                    return;
+                }
 
-        try (Connection connection = HuskHomes.getConnection()) {
-            DataManager.setPlayerDestinationLocation(event.getPlayer(), teleportationPoint, connection);
-            TeleportManager.teleportPlayer(event.getPlayer());
-        } catch (SQLException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "An SQL exception occurred teleporting a player.", e);
-        }
+
+                Warp warp = this.huskHomesAPI.getWarp(spawnWarpName);
+
+                if (warp == null) {
+                    return;
+                }
+
+                TeleportationPoint teleportationPoint = new TeleportationPoint(warp.getLocation(), warp.getServer());
+
+                DataManager.setPlayerDestinationLocation(event.getPlayer(), teleportationPoint, connection);
+                TeleportManager.teleportPlayer(event.getPlayer());
+
+            } catch (SQLException e) {
+                Bukkit.getLogger().log(Level.SEVERE, "An SQL exception occurred teleporting a player.", e);
+            }
+
+        });
+
 
     }
 
